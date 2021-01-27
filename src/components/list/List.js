@@ -1,39 +1,44 @@
 import React from 'react'
-import { StyleSheet, Text, View, FlatList, Image ,Alert,TouchableOpacity} from 'react-native';
-
+import { StyleSheet, Text, View, FlatList, Image, Alert, TouchableOpacity } from 'react-native';
+import useComanda from '../../hooks/useComanda'
 
 
 function Lista(props) {
-
+    const [platos, setPlatos] = useComanda();
+    console.log(platos);
+    const addItem = (item) => {
+        const itemExiste = platos.find((plato => plato.key === item.key))
+        if(itemExiste != null){
+            itemExiste.cant = itemExiste.cant + 1;
+            setPlatos([...platos]);
+        }else{
+            setPlatos([...platos,item]);
+        };
+    }
     return (
 
         <View style={styles.container}>
 
             <Text style={styles.textSubtitle}>Lista de {props.titulo}</Text>
-            <View style={styles.line}></View>
 
-
-            <FlatList style={{height:540}}
+            <FlatList style={{ height: 540 }}
                 ListEmptyComponent={() => <Text>No hay elementos</Text>}
                 data={props.array}
                 extraData={props}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
-                    <TouchableOpacity onPress={()=> {
-                        item.cant = item.cant+1;
-                        console.log(item.cant);
-                        }}> 
-                    <View   style={styles.listItem}  >
-                        <Image
-                            source={{ uri: item.img }}
-                            style={styles.coverImage}
-                        />
-                        <View  style={styles.metaInfo}>
-                            
-                            <Text style={styles.title} >{item.name}</Text>
-                            <Text style={styles.listItemText}>Cantidad:{item.cant}</Text>
+                    <TouchableOpacity onPress={() => { addItem(item) }}>
+                        <View style={styles.listItem}  >
+                            <Image
+                                source={{ uri: item.img }}
+                                style={styles.coverImage}
+                            />
+                            <View style={styles.metaInfo}>
+
+                                <Text style={styles.title} >{item.name}</Text>
+                                <Text style={styles.listItemText}>Cantidad:{item.cant}</Text>
+                            </View>
                         </View>
-                    </View>
                     </TouchableOpacity>
                 )}
             />
@@ -48,8 +53,9 @@ function Lista(props) {
 
 const styles = StyleSheet.create({
     container: {
+
         marginVertical: 15,
-        alignItems: 'center' 
+        alignItems: 'center'
     },
     text: {
         fontSize: 20,

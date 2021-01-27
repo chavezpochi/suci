@@ -1,23 +1,37 @@
-import * as React from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Alert, TouchableOpacity } from 'react-native';
+import useComanda from '../../hooks/useComanda'
+import React, { useState,useContext} from 'react';
+import { StyleSheet, Text, View, FlatList, Image, Button, TouchableOpacity } from 'react-native';
 import Menu from '../../common/Menu'
 
 function Comanda(props) {
+    const [count, setCount] = useState(0);
+    const [platos, setPlatos] = useComanda();
+    
+
+    const addItem = (item) => {
+        item.cant += 1;
+        setCount(count + 1);
+        console.log(item);
+    };
+    const deleteItem = (item) => {
+        if(item.cant != 0){
+        item.cant -= 1;
+        setCount(count - 1);
+        console.log(item);
+        }
+    };
     return (
 
         <View >
-            <Menu title='Comanda:1 - Mesa: 12 - Mozo: Nico - Hora: 21:30' />
+            <Menu style={styles.menu} title='Comanda:1 - Mesa: 12 - Mozo: Nico - Hora: 21:30' />
 
             <View style={styles.container}>
                 <FlatList style={{ height: 540 }}
                     ListEmptyComponent={() => <Text>No hay elementos</Text>}
-                    data={props.list}
-                    keyExtractor={item => item.id}
+                    data={platos}
+                    keyExtractor={item => item.key}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => {
-                            item.cant = item.cant + 1;
-                            console.log(item.cant);
-                        }}>
+                        
                             <View style={styles.listItem}  >
                                 <Image
                                     source={{ uri: item.img }}
@@ -27,9 +41,16 @@ function Comanda(props) {
 
                                     <Text style={styles.title} >{item.name}</Text>
                                     <Text style={styles.listItemText}>Cantidad:{item.cant}</Text>
+                                    
                                 </View>
+                                <TouchableOpacity style={styles.button} onPress={() => deleteItem(item)}>
+                                <Text>-</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.button} onPress={() => addItem(item)}>
+                                <Text>+</Text>
+                                </TouchableOpacity>
                             </View>
-                        </TouchableOpacity>
+                        
                     )}
                 />
             </View>
@@ -37,15 +58,18 @@ function Comanda(props) {
         </View>
 
     );
-}
 
+
+}
 
 
 
 const styles = StyleSheet.create({
     container: {
-        marginVertical: 15,
-        alignItems: 'center'
+        flexGrow:1,
+        flex: 1,
+        position:'relative',
+        margin: 10
     },
     text: {
         fontSize: 20,
@@ -76,8 +100,16 @@ const styles = StyleSheet.create({
         fontSize: 15,
         padding: 10
     },
+    menu: {position:'absolute'},
 
     textSubtitle: { fontSize: 18, fontWeight: 'bold', color: 'gray' },
+    button: {
+        alignItems: "center",
+        backgroundColor: "#DDDDDD",
+        margin: 10,
+        padding: 10,
+        height:50,
+      }
 
 });
 
